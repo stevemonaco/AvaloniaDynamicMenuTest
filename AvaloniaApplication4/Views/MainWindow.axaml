@@ -23,32 +23,26 @@
 	<Grid RowDefinitions="auto,*">
 		<Menu x:Name="menu">
 			<MenuItem Header="StringCommand">
-				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
+				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
 					<!-- Exception on drop down, cannot convert 'MainWindowViewModel' to string for the CommandParameter even though RecentFiles is ObservableCollection<string> -->
 					<!-- This is the scenario I want to work (generated sub menu with RelayCommand), the rest are investigative -->
+					<!-- This works if I add the `recent` class and remove CommandParameter and Header binding -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem">
-							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithStringCommand, ElementName=menu}" />
+							<Setter Property="Command" Value="{ReflectionBinding #menu.DataContext.OpenRecentFileWithStringCommand}" />
+							<Setter Property="CommandParameter" Value="{Binding}" />
+							<Setter Property="Header" Value="{Binding}" />
 						</Style>
 					</MenuItem.Styles>
-
-					<!-- I have tried the following and it does not work either. Command and CommandParameter are null in DevTools, but the Header is correct -->
-					<!--<MenuItem.ItemTemplate>
-						<DataTemplate>
-							<MenuItem
-								Command="{ReflectionBinding #menu.DataContext.OpenRecentFileCommand}"
-								CommandParameter="{Binding}"
-								Header="{Binding}" />
-						</DataTemplate>
-					</MenuItem.ItemTemplate>-->
 				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="ObjectCommand">
 				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
 					<!-- Works with object->string parameter cast in command -->
+					<!-- Works with Classes="recent" and those items being set in the inline style -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem MenuItem">
-							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithObjectCommand, ElementName=menu}" />
+							<Setter Property="Command" Value="{ReflectionBinding #menu.DataContext.OpenRecentFileWithObjectCommand}" />
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
@@ -58,7 +52,7 @@
 					<!-- Disabled when binding to method with string parameter -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem MenuItem">
-							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithStringMethod, ElementName=menu}" />
+							<Setter Property="Command" Value="{ReflectionBinding #menu.DataContext.OpenRecentFileWithStringMethod}" />
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
@@ -66,9 +60,10 @@
 			<MenuItem Header="ObjectCommand">
 				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
 					<!-- Works with object->string parameter cast in method -->
+					<!-- Works with Classes="recent" and those items being set in the inline style -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem MenuItem">
-							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithObjectMethod, ElementName=menu}" />
+							<Setter Property="Command" Value="{ReflectionBinding #menu.DataContext.OpenRecentFileWithObjectMethod}" />
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
