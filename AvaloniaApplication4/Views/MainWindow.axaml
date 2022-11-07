@@ -14,6 +14,12 @@
 			<Setter Property="Header" Value="{Binding}" />
 			<Setter Property="CommandParameter" Value="{Binding}" />
 		</Style>
+
+		<Style Selector="MenuItem.recentCommand > MenuItem">
+			<Setter Property="Header" Value="{Binding}" />
+			<Setter Property="CommandParameter" Value="{Binding}" />
+			<Setter Property="Command" Value="{ReflectionBinding #menu.DataContext.OpenRecentFileWithStringCommand}" />
+		</Style>
 	</Window.Styles>
 
     <Design.DataContext>
@@ -26,7 +32,6 @@
 				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
 					<!-- Exception on drop down, cannot convert 'MainWindowViewModel' to string for the CommandParameter even though RecentFiles is ObservableCollection<string> -->
 					<!-- This is the scenario I want to work (generated sub menu with RelayCommand), the rest are investigative -->
-					<!-- This works if I add the `recent` class and remove CommandParameter and Header binding -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem">
 							<Setter Property="Command" Value="{ReflectionBinding #menu.DataContext.OpenRecentFileWithStringCommand}" />
@@ -35,6 +40,10 @@
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
+			</MenuItem>
+			<MenuItem Header="StringCommand.recentCommand">
+				<!-- Works -->
+				<MenuItem Classes="recentCommand" Header="Recent Files" Items="{Binding RecentFiles}" />
 			</MenuItem>
 			<MenuItem Header="ObjectCommand">
 				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
