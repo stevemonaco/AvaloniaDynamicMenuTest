@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaDynamicMenuTest.ViewModels"
+		xmlns:sys="using:System"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaDynamicMenuTest.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Avalonia Dynamic Menu Test">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+	<Grid RowDefinitions="auto,*">
+		<Menu x:Name="menu">
+			<MenuItem Header="StringCommand">
+				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
+					<!-- Exception on drop down, cannot convert 'MainWindowViewModel' to string for the CommandParameter even though RecentFiles is ObservableCollection<string> -->
+					<!-- This is the scenario I want to work (generated sub menu with RelayCommand), the rest are investigative -->
+					<MenuItem.Styles>
+						<Style Selector="MenuItem">
+							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithStringCommand, ElementName=menu}" />
+							<Setter Property="CommandParameter" Value="{Binding}" />
+							<Setter Property="Header" Value="{Binding}" />
+						</Style>
+					</MenuItem.Styles>
+
+					<!-- I have tried the following and it does not work either. Command and CommandParameter are null in DevTools, but the Header is correct -->
+					<!--<MenuItem.ItemTemplate>
+						<DataTemplate>
+							<MenuItem
+								Command="{ReflectionBinding #menu.DataContext.OpenRecentFileCommand}"
+								CommandParameter="{Binding}"
+								Header="{Binding}" />
+						</DataTemplate>
+					</MenuItem.ItemTemplate>-->
+				</MenuItem>
+			</MenuItem>
+			<MenuItem Header="ObjectCommand">
+				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
+					<!-- Works -->
+					<MenuItem.Styles>
+						<Style Selector="MenuItem MenuItem">
+							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithObjectCommand, ElementName=menu}" />
+							<Setter Property="CommandParameter" Value="{Binding}" />
+							<Setter Property="Header" Value="{Binding}" />
+						</Style>
+					</MenuItem.Styles>
+				</MenuItem>
+			</MenuItem>
+			<MenuItem Header="StringMethod">
+				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
+					<!-- Disabled when binding to method with string parameter -->
+					<MenuItem.Styles>
+						<Style Selector="MenuItem MenuItem">
+							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithStringMethod, ElementName=menu}" />
+							<Setter Property="CommandParameter" Value="{Binding}" />
+							<Setter Property="Header" Value="{Binding}" />
+						</Style>
+					</MenuItem.Styles>
+				</MenuItem>
+			</MenuItem>
+			<MenuItem Header="ObjectCommand">
+				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
+					<!-- Works binding to method with object parameter -->
+					<MenuItem.Styles>
+						<Style Selector="MenuItem MenuItem">
+							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithObjectMethod, ElementName=menu}" />
+							<Setter Property="CommandParameter" Value="{Binding}" />
+							<Setter Property="Header" Value="{Binding}" />
+						</Style>
+					</MenuItem.Styles>
+				</MenuItem>
+			</MenuItem>
+		</Menu>
+
+		<!-- Display -->
+		<StackPanel Grid.Row="1">
+			<TextBlock Text="Dynamic Menu Items Test" />
+			<TextBlock Text="{Binding SelectedFile, StringFormat='Selected: {0}', TargetNullValue=Selected: None}" />
+		</StackPanel>
+	</Grid>
+</Window>
