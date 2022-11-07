@@ -9,6 +9,13 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="Avalonia Dynamic Menu Test">
 
+	<Window.Styles>
+		<Style Selector="MenuItem.recent > MenuItem">
+			<Setter Property="Header" Value="{Binding}" />
+			<Setter Property="CommandParameter" Value="{Binding}" />
+		</Style>
+	</Window.Styles>
+
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
@@ -16,14 +23,12 @@
 	<Grid RowDefinitions="auto,*">
 		<Menu x:Name="menu">
 			<MenuItem Header="StringCommand">
-				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
+				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
 					<!-- Exception on drop down, cannot convert 'MainWindowViewModel' to string for the CommandParameter even though RecentFiles is ObservableCollection<string> -->
 					<!-- This is the scenario I want to work (generated sub menu with RelayCommand), the rest are investigative -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem">
 							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithStringCommand, ElementName=menu}" />
-							<Setter Property="CommandParameter" Value="{Binding}" />
-							<Setter Property="Header" Value="{Binding}" />
 						</Style>
 					</MenuItem.Styles>
 
@@ -39,37 +44,31 @@
 				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="ObjectCommand">
-				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
-					<!-- Works -->
+				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
+					<!-- Works with object->string parameter cast in command -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem MenuItem">
 							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithObjectCommand, ElementName=menu}" />
-							<Setter Property="CommandParameter" Value="{Binding}" />
-							<Setter Property="Header" Value="{Binding}" />
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="StringMethod">
-				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
+				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
 					<!-- Disabled when binding to method with string parameter -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem MenuItem">
 							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithStringMethod, ElementName=menu}" />
-							<Setter Property="CommandParameter" Value="{Binding}" />
-							<Setter Property="Header" Value="{Binding}" />
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="ObjectCommand">
-				<MenuItem Header="Recent Files" Items="{Binding RecentFiles}">
-					<!-- Works binding to method with object parameter -->
+				<MenuItem Classes="recent" Header="Recent Files" Items="{Binding RecentFiles}">
+					<!-- Works with object->string parameter cast in method -->
 					<MenuItem.Styles>
 						<Style Selector="MenuItem MenuItem">
 							<Setter Property="Command" Value="{ReflectionBinding DataContext.OpenRecentFileWithObjectMethod, ElementName=menu}" />
-							<Setter Property="CommandParameter" Value="{Binding}" />
-							<Setter Property="Header" Value="{Binding}" />
 						</Style>
 					</MenuItem.Styles>
 				</MenuItem>
